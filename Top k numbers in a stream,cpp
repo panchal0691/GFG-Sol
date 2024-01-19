@@ -1,0 +1,48 @@
+class Solution
+{
+public:
+    vector<vector<int>> kTop(vector<int> &arr, int N, int K)
+    {
+        vector<int> f(101, 0);
+
+        auto comp = [](pair<int, int> a, pair<int, int> b) -> bool
+        {
+            if (a.first == b.first)
+                return a.second < b.second;
+
+            return a.first > b.first;
+        };
+
+        set<pair<int, int>, decltype(comp)> values(comp);
+        vector<vector<int>> ans(N);
+
+        for (int i = 0; i < N; i++)
+        {
+            if (f[arr[i]])
+                values.erase({f[arr[i]], arr[i]});
+
+            ++f[arr[i]];
+
+            values.insert({f[arr[i]], arr[i]});
+
+            while (values.size() > K)
+            {
+                auto ptr = values.end();
+                --ptr;
+
+                values.erase(ptr);
+            }
+
+            auto ptr = values.begin();
+
+            while (ptr != values.end())
+            {
+                if (ptr->second > 0)
+                    ans[i].push_back((ptr)->second);
+                ++ptr;
+            }
+        }
+
+        return ans;
+    }
+};
